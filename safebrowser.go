@@ -69,7 +69,9 @@
 //
 // For more information, see the API developer's guide:
 //	https://developers.google.com/safe-browsing/
-package safebrowsing
+
+// zvelo.io safebrowsing adds support for a no-remote mode.
+package safebrowsing // import "zvelo.io/safebrowsing"
 
 import (
 	"context"
@@ -80,7 +82,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	pb "github.com/google/safebrowsing/internal/safebrowsing_proto"
+	pb "zvelo.io/safebrowsing/internal/safebrowsing_proto"
 )
 
 const (
@@ -184,6 +186,12 @@ type Config struct {
 	// ServerURL is the URL for the Safe Browsing API server.
 	// If empty, it defaults to DefaultServerURL.
 	ServerURL string
+
+	// NoRemote puts the service in prefix-match only mode, where
+	// matches are necessary but not sufficient to deem the request a match.
+	// Results are expected to be run through the remote API downstream, with
+	// the current instance acting as a pre-filter.
+	NoRemote bool
 
 	// ProxyURL is the URL of the proxy to use for all requests.
 	// If empty, the underlying library uses $HTTP_PROXY environment variable.
@@ -455,6 +463,22 @@ func (sb *SafeBrowser) LookupURLsContext(ctx context.Context, urls []string) (th
 			if len(unsureThreats) == 0 {
 				atomic.AddInt64(&sb.stats.QueriesByDatabase, 1)
 				continue // There are definitely no threats for this full hash
+			}
+
+			// NoRemote mode enables prefix-only matching, which is necessary but not
+			// sufficient to be marked as a threat. Result is always "maybe" because
+			// remote is never checked, thus the cache is never updated with full
+			// hash positives.  When running in this mode, results only indicate the
+			// request should be processed by another instance of SafeBrowser not set
+			// in NoRemote mode to enable checking of the full hash.
+			if sb.config.NoRemote {
+				for _, td := range unsureThreats {
+					threats[i] = append(threats[i], URLThreat{
+						Pattern:          pattern,
+						ThreatDescriptor: td,
+					})
+				}
+				continue // partial matches only mode.
 			}
 
 			// Lookup in cache according to recently seen values.

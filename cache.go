@@ -18,7 +18,7 @@ import (
 	"sync"
 	"time"
 
-	pb "github.com/google/safebrowsing/internal/safebrowsing_proto"
+	pb "zvelo.io/safebrowsing/internal/safebrowsing_proto"
 )
 
 type cacheResult int
