@@ -29,8 +29,8 @@ import (
 )
 
 const (
-	findHashPath    = "/v4/fullHashes:find"
-	fetchUpdatePath = "/v4/threatListUpdates:fetch"
+	findHashPath    = "/v1alpha1/fullHashes:find"
+	fetchUpdatePath = "/v1alpha1/threatListUpdates:fetch"
 )
 
 // The api interface specifies wrappers around the Safe Browsing API.
