@@ -87,7 +87,7 @@ import (
 
 const (
 	// DefaultServerURL is the default URL for the Safe Browsing API.
-	DefaultServerURL = "safebrowsing.googleapis.com"
+	DefaultServerURL = "webrisk.googleapis.com"
 
 	// DefaultUpdatePeriod is the default period for how often SafeBrowser will
 	// reload its blacklist database.
