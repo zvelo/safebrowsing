@@ -29,8 +29,8 @@ import (
 )
 
 const (
-	findHashPath    = "/v1alpha1/fullHashes:find"
-	fetchUpdatePath = "/v1alpha1/threatListUpdates:fetch"
+	findHashPath    = "/$rpc/google.cloud.webrisk.v1alpha1.WebRiskServiceV1Alpha1/FindFullHashes"
+	fetchUpdatePath = "/$rpc/google.cloud.webrisk.v1alpha1.WebRiskServiceV1Alpha1/FetchThreatListUpdates"
 )
 
 // The api interface specifies wrappers around the Safe Browsing API.
